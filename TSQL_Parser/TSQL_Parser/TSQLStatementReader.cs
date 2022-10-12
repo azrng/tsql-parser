@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 using TSQL.Statements;
 using TSQL.Statements.Parsers;
@@ -10,109 +8,114 @@ using TSQL.Tokens;
 
 namespace TSQL
 {
-	public partial class TSQLStatementReader
-	{
-		private TSQLTokenizer tokenizer = null;
-		private bool hasMore = true;
-		private TSQLStatement current = null;
+    public partial class TSQLStatementReader
+    {
+        private TSQLTokenizer _tokenizer;
+        private bool _hasMore = true;
+        private TSQLStatement _current;
 
-		public TSQLStatementReader(
-			string tsqlText) :
-				this(new StringReader(tsqlText))
-		{
+        public TSQLStatementReader(string tsqlText) : this(new StringReader(tsqlText))
+        {
+        }
 
-		}
+        public TSQLStatementReader(TextReader tsqlStream)
+        {
+            _tokenizer = new TSQLTokenizer(tsqlStream);
+            // move to first token
+            _tokenizer.MoveNext();
+        }
 
-		public TSQLStatementReader(
-			TextReader tsqlStream)
-		{
-			tokenizer = new TSQLTokenizer(tsqlStream);
-			// move to first token
-			tokenizer.MoveNext();
-		}
+        public bool UseQuotedIdentifiers
+        {
+            get
+            {
+                return _tokenizer.UseQuotedIdentifiers;
+            }
 
-		public bool UseQuotedIdentifiers
-		{
-			get
-			{
-				return tokenizer.UseQuotedIdentifiers;
-			}
+            set
+            {
+                _tokenizer.UseQuotedIdentifiers = value;
+            }
+        }
 
-			set
-			{
-				tokenizer.UseQuotedIdentifiers = value;
-			}
-		}
+        /// <summary>
+        /// 是否包含空格
+        /// </summary>
+        public bool IncludeWhitespace
+        {
+            get
+            {
+                return _tokenizer.IncludeWhitespace;
+            }
 
-		public bool IncludeWhitespace
-		{
-			get
-			{
-				return tokenizer.IncludeWhitespace;
-			}
+            set
+            {
+                _tokenizer.IncludeWhitespace = value;
+            }
+        }
 
-			set
-			{
-				tokenizer.IncludeWhitespace = value;
-			}
-		}
+        public bool MoveNext()
+        {
+            CheckDisposed();
 
-		public bool MoveNext()
-		{
-			CheckDisposed();
+            if (_hasMore)
+            {
+                // eat up any tokens inbetween statements until we get to something that might start a new statement
+                // which should be a keyword if the batch is valid
 
-			if (hasMore)
-			{
-				// eat up any tokens inbetween statements until we get to something that might start a new statement
-				// which should be a keyword if the batch is valid
+                // if the last statement parser did not swallow the final semicolon, or there were multiple semicolons, we will swallow it also
+                while (
+                    _tokenizer.Current != null &&
+                    (
+                        _tokenizer.Current.IsWhitespace() ||
+                        _tokenizer.Current.IsComment() ||
+                        (
+                            _tokenizer.Current.Type == TSQLTokenType.Character &&
+                            _tokenizer.Current.AsCharacter.Character == TSQLCharacters.Semicolon
+                        )
+                    ) &&
+                    _tokenizer.MoveNext()) ;
 
-				// if the last statement parser did not swallow the final semicolon, or there were multiple semicolons, we will swallow it also
-				while (
-					tokenizer.Current != null &&
-					(
-						tokenizer.Current.IsWhitespace() ||
-						tokenizer.Current.IsComment() ||
-						(
-							tokenizer.Current.Type == TSQLTokenType.Character &&
-							tokenizer.Current.AsCharacter.Character == TSQLCharacters.Semicolon
-						)
-					) &&
-					tokenizer.MoveNext());
+                if (_tokenizer.Current == null)
+                {
+                    _hasMore = false;
 
-				if (tokenizer.Current == null)
-				{
-					hasMore = false;
+                    return _hasMore;
+                }
 
-					return hasMore;
-				}
+                _current = new TSQLStatementParserFactory().Create(_tokenizer).Parse();
+            }
 
-				current = new TSQLStatementParserFactory().Create(tokenizer).Parse();
-			}
+            return _hasMore;
+        }
 
-			return hasMore;
-		}
+        public TSQLStatement Current
+        {
+            get
+            {
+                CheckDisposed();
 
-		public TSQLStatement Current
-		{
-			get
-			{
-				CheckDisposed();
+                return _current;
+            }
+        }
 
-				return current;
-			}
-		}
-
-		public static List<TSQLStatement> ParseStatements(
-			string tsqlText,
-			bool useQuotedIdentifiers = false,
-			bool includeWhitespace = false)
-		{
-			return new TSQLStatementReader(
-				tsqlText)
-				{
-					IncludeWhitespace = includeWhitespace,
-					UseQuotedIdentifiers = useQuotedIdentifiers
-				}.ToList();
-		}
-	}
+        /// <summary>
+        /// 转换报告
+        /// </summary>
+        /// <param name="tsqlText"></param>
+        /// <param name="useQuotedIdentifiers"></param>
+        /// <param name="includeWhitespace">是否包含空格</param>
+        /// <returns></returns>
+        public static List<TSQLStatement> ParseStatements(
+            string tsqlText,
+            bool useQuotedIdentifiers = false,
+            bool includeWhitespace = false)
+        {
+            return new TSQLStatementReader(tsqlText)
+            {
+                IncludeWhitespace = includeWhitespace,
+                UseQuotedIdentifiers = useQuotedIdentifiers
+            }.ToList();
+        }
+    }
 }

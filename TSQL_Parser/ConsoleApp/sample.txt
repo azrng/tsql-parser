@@ -1,3 +1,3 @@
 ﻿select * from cr.user1 u1
 inner join cr.user2 u2 on u1.id=u2.pariendid
-where u1.name='李思' and u2.sex='男'
+where u1.name='李思' and u2.sex='男' and u2.bir not like '%121245%'

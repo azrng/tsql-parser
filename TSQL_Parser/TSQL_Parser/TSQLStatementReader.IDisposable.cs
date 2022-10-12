@@ -36,13 +36,13 @@ namespace TSQL
 				// unmanaged resource releases
 				try
 				{
-					(tokenizer as IDisposable).Dispose();
+					(_tokenizer as IDisposable).Dispose();
 				}
 				catch (Exception)
 				{
 					// can't handle Dispose throwing exceptions
 				}
-				tokenizer = null;
+				_tokenizer = null;
 
 				_disposed = true;
 			}
