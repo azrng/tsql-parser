@@ -4,7 +4,7 @@ namespace TSQL.Tokens
 {
 	public class TSQLSingleLineComment : TSQLComment
 	{
-		internal TSQLSingleLineComment(
+		public TSQLSingleLineComment(
 			int beginPosition,
 			string text) :
 			base(

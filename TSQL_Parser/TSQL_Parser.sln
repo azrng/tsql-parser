@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30804.86
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33006.217
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSQL_Parser", "TSQL_Parser\TSQL_Parser.csproj", "{2E85041A-D8FE-452B-831E-8DEF3CFC4A17}"
 EndProject
@@ -13,6 +13,10 @@ Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "SandcastleDocs", "Sandcastl
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSQL_Parser_NetStandard", "TSQL_Parser\TSQL_Parser_NetStandard.csproj", "{A0F922BA-078D-4DE1-BCEC-CFD7AE9A98A4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test_NetStandard", "Test_NetStandard\Test_NetStandard.csproj", "{FCB45DBE-01D7-4FAB-BA34-8AE030EB78B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp", "ConsoleApp\ConsoleApp.csproj", "{43F0BD90-370F-4EEF-B356-053AFB007289}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +45,18 @@ Global
 		{A0F922BA-078D-4DE1-BCEC-CFD7AE9A98A4}.Docs|Any CPU.ActiveCfg = Docs|Any CPU
 		{A0F922BA-078D-4DE1-BCEC-CFD7AE9A98A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0F922BA-078D-4DE1-BCEC-CFD7AE9A98A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCB45DBE-01D7-4FAB-BA34-8AE030EB78B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCB45DBE-01D7-4FAB-BA34-8AE030EB78B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCB45DBE-01D7-4FAB-BA34-8AE030EB78B9}.Docs|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCB45DBE-01D7-4FAB-BA34-8AE030EB78B9}.Docs|Any CPU.Build.0 = Debug|Any CPU
+		{FCB45DBE-01D7-4FAB-BA34-8AE030EB78B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCB45DBE-01D7-4FAB-BA34-8AE030EB78B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43F0BD90-370F-4EEF-B356-053AFB007289}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43F0BD90-370F-4EEF-B356-053AFB007289}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43F0BD90-370F-4EEF-B356-053AFB007289}.Docs|Any CPU.ActiveCfg = Debug|Any CPU
+		{43F0BD90-370F-4EEF-B356-053AFB007289}.Docs|Any CPU.Build.0 = Debug|Any CPU
+		{43F0BD90-370F-4EEF-B356-053AFB007289}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43F0BD90-370F-4EEF-B356-053AFB007289}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,7 +4,7 @@ namespace TSQL.Tokens
 {
 	public class TSQLIncompleteIdentifier : TSQLIncompleteToken
 	{
-		internal TSQLIncompleteIdentifier(
+		public TSQLIncompleteIdentifier(
 			int beginPosition,
 			string text) :
 			base(

@@ -7,7 +7,7 @@ namespace TSQL.Tokens
 {
 	public class TSQLBinaryLiteral : TSQLLiteral
 	{
-		internal TSQLBinaryLiteral(
+		public TSQLBinaryLiteral(
 			int beginPosition,
 			string text) :
 			base(

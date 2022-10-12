@@ -6,7 +6,7 @@ using System.Text;
 
 namespace TSQL.Tokens
 {
-	internal interface ITSQLTokenizer : IEnumerator, IEnumerable, IEnumerator<TSQLToken>, IEnumerable<TSQLToken>
+	public interface ITSQLTokenizer : IEnumerator, IEnumerable, IEnumerator<TSQLToken>, IEnumerable<TSQLToken>
 	{
 		
 	}

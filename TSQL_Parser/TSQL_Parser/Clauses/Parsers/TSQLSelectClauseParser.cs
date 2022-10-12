@@ -14,7 +14,7 @@ namespace TSQL.Clauses.Parsers
 	/// <summary>
 	///		This clause handles parsing just the SELECT portion of a larger SELECT statement.
 	/// </summary>
-	internal class TSQLSelectClauseParser
+	public class TSQLSelectClauseParser
 	{
 		public TSQLSelectClause Parse(ITSQLTokenizer tokenizer)
 		{

@@ -4,7 +4,7 @@ namespace TSQL.Tokens
 {
 	public class TSQLVariable : TSQLToken
 	{
-		internal TSQLVariable(
+		public TSQLVariable(
 			int beginPosition,
 			string text) :
 			base(

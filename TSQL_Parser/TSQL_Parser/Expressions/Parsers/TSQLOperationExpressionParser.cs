@@ -8,7 +8,7 @@ using TSQL.Tokens;
 
 namespace TSQL.Expressions.Parsers
 {
-	internal class TSQLOperationExpressionParser
+	public class TSQLOperationExpressionParser
 	{
 		public TSQLOperationExpression Parse(
 			ITSQLTokenizer tokenizer,

@@ -9,7 +9,7 @@ using TSQL.Tokens.Parsers;
 
 namespace TSQL.Expressions.Parsers
 {
-	internal class TSQLArgumentListParser
+	public class TSQLArgumentListParser
 	{
 		public TSQLArgumentList Parse(ITSQLTokenizer tokenizer)
 		{

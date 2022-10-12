@@ -18,6 +18,6 @@ namespace TSQL.Expressions
 			}
 		}
 
-		public TSQLLiteral Literal { get; internal set; }
+		public TSQLLiteral Literal { get;  set; }
 	}
 }

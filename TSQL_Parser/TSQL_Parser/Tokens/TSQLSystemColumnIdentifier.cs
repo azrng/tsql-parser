@@ -7,7 +7,7 @@ namespace TSQL.Tokens
 {
 	public class TSQLSystemColumnIdentifier : TSQLIdentifier
 	{
-		internal TSQLSystemColumnIdentifier(
+		public TSQLSystemColumnIdentifier(
 			int beginPosition,
 			string text) :
 			base(

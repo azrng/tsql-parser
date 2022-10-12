@@ -4,7 +4,7 @@ namespace TSQL.Tokens
 {
 	public class TSQLStringLiteral : TSQLLiteral
 	{
-		internal TSQLStringLiteral(
+		public TSQLStringLiteral(
 			int beginPosition,
 			string text) :
 			base(

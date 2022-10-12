@@ -8,7 +8,7 @@ using TSQL.Tokens.Parsers;
 
 namespace TSQL.Clauses.Parsers
 {
-	internal class TSQLOrderByClauseParser
+	public class TSQLOrderByClauseParser
 	{
 		public TSQLOrderByClause Parse(ITSQLTokenizer tokenizer)
 		{
