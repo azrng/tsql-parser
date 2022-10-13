@@ -3,14 +3,15 @@ using System.Text;
 
 namespace TSQL.Tokens
 {
+    /// <summary>
+    /// tsql 标记(最小字符单位)
+    /// </summary>
     public abstract class TSQLToken
     {
-        protected internal TSQLToken(
-            int beginPosition,
-            string text)
+        protected internal TSQLToken(int beginPosition, string text)
         {
             BeginPosition = beginPosition;
-            Text = text ?? throw new ArgumentNullException("text");
+            Text = text ?? throw new ArgumentNullException(nameof(text));
         }
 
         /// <summary>
@@ -40,6 +41,9 @@ namespace TSQL.Tokens
             }
         }
 
+        /// <summary>
+        /// 文本值
+        /// </summary>
         public string Text { get; }
 
         /// <summary>

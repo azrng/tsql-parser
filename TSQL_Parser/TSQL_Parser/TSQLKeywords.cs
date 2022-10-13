@@ -244,8 +244,12 @@ namespace TSQL
 			}
 		}
 
-		public static bool IsKeyword(
-			string token)
+		/// <summary>
+		/// 是否是关键字
+		/// </summary>
+		/// <param name="token"></param>
+		/// <returns></returns>
+		public static bool IsKeyword(string token)
 		{
 			if (!string.IsNullOrWhiteSpace(token))
 			{
@@ -257,7 +261,7 @@ namespace TSQL
 			}
 		}
 
-		public bool In(params TSQLKeywords[] keywords)
+        public bool In(params TSQLKeywords[] keywords)
 		{
 			return
 				keywords != null &&

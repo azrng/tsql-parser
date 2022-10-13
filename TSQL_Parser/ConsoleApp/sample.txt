@@ -1,3 +1,2 @@
-﻿select * from cr.user1 u1
-inner join cr.user2 u2 on u1.id=u2.pariendid
-where u1.name='李思' and u2.sex='男' and u2.bir not like '%121245%'
+﻿select * from patient.patient_master_info pmi
+where pmi.nation_name!= '李思' and pmi.patient_id in (716,452) and pmi.patient_name not  like '%文涛%' order by patient_id limit 10;

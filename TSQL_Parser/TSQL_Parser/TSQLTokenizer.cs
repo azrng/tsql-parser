@@ -8,28 +8,46 @@ using TSQL.Tokens.Parsers;
 
 namespace TSQL
 {
+    /// <summary>
+    /// tsql 分词器
+    /// </summary>
     public partial class TSQLTokenizer
     {
-        private TSQLCharacterReader _charReader = null;
-        private TSQLToken _current = null;
+        private TSQLCharacterReader _charReader;
+        private TSQLToken _current;
+        /// <summary>
+        /// 是否还有更多(是否还没读完)
+        /// </summary>
         private bool _hasMore = true;
 
-        public TSQLTokenizer(
-            string tsqlText) :
-                this(new StringReader(tsqlText))
+        /// <summary>
+        /// 所有的字符
+        /// </summary>
+        private readonly StringBuilder _characterHolder = new StringBuilder();
+
+        public TSQLTokenizer(string tsqlText) : this(new StringReader(tsqlText))
         {
         }
 
-        public TSQLTokenizer(
-            TextReader tsqlStream)
+        public TSQLTokenizer(TextReader tsqlStream)
         {
             _charReader = new TSQLCharacterReader(tsqlStream);
         }
 
+        /// <summary>
+        /// 使用引证标识符
+        /// </summary>
         public bool UseQuotedIdentifiers { get; set; }
 
+        /// <summary>
+        /// 是否包含空格
+        /// </summary>
         public bool IncludeWhitespace { get; set; }
 
+        /// <summary>
+        /// 移动到下一个
+        /// </summary>
+        /// <returns></returns>
         public bool MoveNext()
         {
             CheckDisposed();
@@ -38,14 +56,7 @@ namespace TSQL
 
             if (_hasMore)
             {
-                if (IncludeWhitespace)
-                {
-                    _hasMore = _charReader.Read();
-                }
-                else
-                {
-                    _hasMore = _charReader.ReadNextNonWhitespace();
-                }
+                _hasMore = IncludeWhitespace ? _charReader.Read() : _charReader.ReadNextNonWhitespace();
 
                 if (_hasMore)
                 {
@@ -56,24 +67,22 @@ namespace TSQL
             return _hasMore;
         }
 
-        private StringBuilder characterHolder = new StringBuilder();
-
+        /// <summary>
+        /// 设置当前的值
+        /// </summary>
         private void SetCurrent()
         {
-            characterHolder.Length = 0;
+            _characterHolder.Length = 0;
             // TODO: review Position property viability for situations like network streams
-            int startPosition = _charReader.Position;
+            var startPosition = _charReader.Position;
 
-            if (
-                IncludeWhitespace &&
-                char.IsWhiteSpace(_charReader.Current))
+            // 包含空格并且当前就是空格
+            if (IncludeWhitespace && char.IsWhiteSpace(_charReader.Current))
             {
                 do
                 {
-                    characterHolder.Append(_charReader.Current);
-                } while (
-                    _charReader.Read() &&
-                    char.IsWhiteSpace(_charReader.Current));
+                    _characterHolder.Append(_charReader.Current);
+                } while (_charReader.Read() && char.IsWhiteSpace(_charReader.Current));
 
                 if (!_charReader.EOF)
                 {
@@ -82,7 +91,7 @@ namespace TSQL
             }
             else
             {
-                characterHolder.Append(_charReader.Current);
+                _characterHolder.Append(_charReader.Current);
 
                 switch (_charReader.Current)
                 {
@@ -104,7 +113,7 @@ namespace TSQL
                                     _charReader.Current == '9'
                                 )
                                 {
-                                    characterHolder.Append(_charReader.Current);
+                                    _characterHolder.Append(_charReader.Current);
 
                                     goto case '0';
                                 }
@@ -136,7 +145,7 @@ namespace TSQL
                                 {
                                     do
                                     {
-                                        characterHolder.Append(_charReader.Current);
+                                        _characterHolder.Append(_charReader.Current);
                                     } while (
                                         _charReader.Read() &&
                                         _charReader.Current != '\r' &&
@@ -149,7 +158,7 @@ namespace TSQL
                                 }
                                 else if (_charReader.Current == '=')
                                 {
-                                    characterHolder.Append(_charReader.Current);
+                                    _characterHolder.Append(_charReader.Current);
                                 }
                                 else
                                 {
@@ -168,7 +177,7 @@ namespace TSQL
                             {
                                 if (_charReader.Current == '*')
                                 {
-                                    characterHolder.Append(_charReader.Current);
+                                    _characterHolder.Append(_charReader.Current);
 
                                     // supporting nested comments
                                     int currentLevel = 1;
@@ -211,17 +220,17 @@ namespace TSQL
                                             lastWasStar = _charReader.Current == '*';
                                         }
 
-                                        characterHolder.Append(_charReader.Current);
+                                        _characterHolder.Append(_charReader.Current);
                                     }
 
                                     if (!_charReader.EOF)
                                     {
-                                        characterHolder.Append(_charReader.Current);
+                                        _characterHolder.Append(_charReader.Current);
                                     }
                                 }
                                 else if (_charReader.Current == '=')
                                 {
-                                    characterHolder.Append(_charReader.Current);
+                                    _characterHolder.Append(_charReader.Current);
                                 }
                                 else
                                 {
@@ -243,7 +252,7 @@ namespace TSQL
                                     _charReader.Current == '='
                                 )
                                 {
-                                    characterHolder.Append(_charReader.Current);
+                                    _characterHolder.Append(_charReader.Current);
                                 }
                                 else
                                 {
@@ -266,7 +275,7 @@ namespace TSQL
                                     _charReader.Current == '>'
                                 )
                                 {
-                                    characterHolder.Append(_charReader.Current);
+                                    _characterHolder.Append(_charReader.Current);
                                 }
                                 else
                                 {
@@ -286,7 +295,7 @@ namespace TSQL
                                     _charReader.Current == '*'
                                 )
                                 {
-                                    characterHolder.Append(_charReader.Current);
+                                    _characterHolder.Append(_charReader.Current);
                                 }
                                 else
                                 {
@@ -315,7 +324,7 @@ namespace TSQL
                             {
                                 if (_charReader.Current == '=')
                                 {
-                                    characterHolder.Append(_charReader.Current);
+                                    _characterHolder.Append(_charReader.Current);
                                 }
                                 else
                                 {
@@ -332,7 +341,7 @@ namespace TSQL
                             {
                                 if (_charReader.Current == '\'')
                                 {
-                                    characterHolder.Append(_charReader.Current);
+                                    _characterHolder.Append(_charReader.Current);
 
                                     goto case '\'';
                                 }
@@ -353,7 +362,7 @@ namespace TSQL
                             {
                                 if (_charReader.Current == ':')
                                 {
-                                    characterHolder.Append(_charReader.Current);
+                                    _characterHolder.Append(_charReader.Current);
                                 }
                                 else
                                 {
@@ -391,12 +400,12 @@ namespace TSQL
                                     _charReader.Read() &&
                                     _charReader.Current != escapeChar)
                                 {
-                                    characterHolder.Append(_charReader.Current);
+                                    _characterHolder.Append(_charReader.Current);
                                 }
 
                                 if (!_charReader.EOF)
                                 {
-                                    characterHolder.Append(_charReader.Current);
+                                    _characterHolder.Append(_charReader.Current);
                                 }
 
                                 stillEscaped =
@@ -406,7 +415,7 @@ namespace TSQL
 
                                 if (stillEscaped)
                                 {
-                                    characterHolder.Append(_charReader.Current);
+                                    _characterHolder.Append(_charReader.Current);
                                 }
                             } while (stillEscaped);
 
@@ -428,9 +437,9 @@ namespace TSQL
                                     _charReader.Current == 'x' ||
                                     _charReader.Current == 'X')
                                 {
-                                    characterHolder.Append(_charReader.Current);
+                                    _characterHolder.Append(_charReader.Current);
 
-                                    bool foundEnd = false;
+                                    var foundEnd = false;
 
                                     while (
                                         !foundEnd &&
@@ -461,7 +470,7 @@ namespace TSQL
                                             case 'E':
                                             case 'F':
                                                 {
-                                                    characterHolder.Append(_charReader.Current);
+                                                    _characterHolder.Append(_charReader.Current);
 
                                                     break;
                                                 }
@@ -469,14 +478,14 @@ namespace TSQL
                                             // https://docs.microsoft.com/en-us/sql/t-sql/language-elements/sql-server-utilities-statements-backslash?view=sql-server-2017
                                             case '\\':
                                                 {
-                                                    characterHolder.Append(_charReader.Current);
+                                                    _characterHolder.Append(_charReader.Current);
 
                                                     if (
                                                         !foundEnd &&
                                                         _charReader.Read())
                                                     {
                                                         // should be \r or \n
-                                                        characterHolder.Append(_charReader.Current);
+                                                        _characterHolder.Append(_charReader.Current);
 
                                                         if (_charReader.Current == '\r')
                                                         {
@@ -485,7 +494,7 @@ namespace TSQL
                                                                 _charReader.Read())
                                                             {
                                                                 // should be \n
-                                                                characterHolder.Append(_charReader.Current);
+                                                                _characterHolder.Append(_charReader.Current);
                                                             }
                                                         }
                                                     }
@@ -542,7 +551,7 @@ namespace TSQL
                                     case 'e':
                                     case 'E':
                                         {
-                                            characterHolder.Append(_charReader.Current);
+                                            _characterHolder.Append(_charReader.Current);
 
                                             if (_charReader.Read())
                                             {
@@ -551,7 +560,7 @@ namespace TSQL
                                                     case '-':
                                                     case '+':
                                                         {
-                                                            characterHolder.Append(_charReader.Current);
+                                                            _characterHolder.Append(_charReader.Current);
 
                                                             break;
                                                         }
@@ -564,9 +573,7 @@ namespace TSQL
                                                 }
                                             }
 
-                                            while (
-                                                !foundEnd &&
-                                                _charReader.Read())
+                                            while (!foundEnd && _charReader.Read())
                                             {
                                                 switch (_charReader.Current)
                                                 {
@@ -581,7 +588,7 @@ namespace TSQL
                                                     case '8':
                                                     case '9':
                                                         {
-                                                            characterHolder.Append(_charReader.Current);
+                                                            _characterHolder.Append(_charReader.Current);
 
                                                             break;
                                                         }
@@ -604,7 +611,7 @@ namespace TSQL
                                             }
                                             else
                                             {
-                                                characterHolder.Append(_charReader.Current);
+                                                _characterHolder.Append(_charReader.Current);
 
                                                 foundPeriod = true;
                                             }
@@ -622,7 +629,7 @@ namespace TSQL
                                     case '8':
                                     case '9':
                                         {
-                                            characterHolder.Append(_charReader.Current);
+                                            _characterHolder.Append(_charReader.Current);
 
                                             break;
                                         }
@@ -724,7 +731,7 @@ namespace TSQL
                                     case '-':
                                     case '+':
                                         {
-                                            characterHolder.Append(_charReader.Current);
+                                            _characterHolder.Append(_charReader.Current);
 
                                             break;
                                         }
@@ -737,9 +744,7 @@ namespace TSQL
                                 }
                             }
 
-                            while (
-                                !foundEnd &&
-                                _charReader.Read())
+                            while (!foundEnd && _charReader.Read())
                             {
                                 switch (_charReader.Current)
                                 {
@@ -751,7 +756,7 @@ namespace TSQL
                                             }
                                             else
                                             {
-                                                characterHolder.Append(_charReader.Current);
+                                                _characterHolder.Append(_charReader.Current);
 
                                                 foundPeriod = true;
                                             }
@@ -769,7 +774,7 @@ namespace TSQL
                                     case '8':
                                     case '9':
                                         {
-                                            characterHolder.Append(_charReader.Current);
+                                            _characterHolder.Append(_charReader.Current);
 
                                             break;
                                         }
@@ -791,20 +796,21 @@ namespace TSQL
                         }
                     default:
                         {
+                            //是否读取到结束
                             bool foundEnd = false;
 
-                            while (
-                                !foundEnd &&
-                                _charReader.Read())
+                            while (!foundEnd && _charReader.Read())
                             {
                                 switch (_charReader.Current)
                                 {
+                                    // 遇到一个特殊字符标志着前一组正常字符的结束
                                     // running into a special character signals the end of a previous grouping of normal characters
                                     case ' ':
                                     case '\t':
                                     case '\r':
                                     case '\n':
-                                    case '.':
+                                    // pgsql中.不是结束
+                                    //case '.':
                                     case ',':
                                     case ';':
                                     case '(':
@@ -824,6 +830,7 @@ namespace TSQL
                                     case '~':
                                     case ':':
                                     case '[':
+                                    // 反斜杠(延续)行
                                     // Backslash (Line Continuation)
                                     case '\\':
                                     case '£':
@@ -866,7 +873,7 @@ namespace TSQL
                                         }
                                     default:
                                         {
-                                            characterHolder.Append(_charReader.Current);
+                                            _characterHolder.Append(_charReader.Current);
 
                                             break;
                                         }
@@ -884,9 +891,9 @@ namespace TSQL
             }
 
             _current = new TSQLTokenFactory().Parse(
-                characterHolder.ToString(),
+                _characterHolder.ToString(),
                 startPosition,
-                startPosition + characterHolder.Length - 1,
+                startPosition + _characterHolder.Length - 1,
                 UseQuotedIdentifiers);
         }
 
@@ -899,10 +906,7 @@ namespace TSQL
             }
         }
 
-        public static List<TSQLToken> ParseTokens(
-            string tsqlText,
-            bool useQuotedIdentifiers = false,
-            bool includeWhitespace = false)
+        public static List<TSQLToken> ParseTokens(string tsqlText, bool useQuotedIdentifiers = false, bool includeWhitespace = false)
         {
             return new TSQLTokenizer(tsqlText)
             {

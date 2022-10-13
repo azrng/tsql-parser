@@ -32,10 +32,15 @@ namespace TSQL.Tokens
         SystemIdentifier,
 
         /// <summary>
-        ///		Recognized T-SQL keyword(公认的t - sql关键字,),
+        ///		Recognized T-SQL keyword(公认的t-sql关键字,),
         ///		e.g. SELECT.
         /// </summary>
         Keyword,
+
+        /// <summary>
+        /// 连接符单词 and or
+        /// </summary>
+        Connector,
 
         /// <summary>
         ///		Comment starting with -- and continuing until the end of the line(注释从——开始，一直到行末),

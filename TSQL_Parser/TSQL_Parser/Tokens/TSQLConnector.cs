@@ -1,12 +1,16 @@
-﻿using System;
+﻿using TSQL;
+using TSQL.Tokens;
 
-namespace TSQL.Tokens
+namespace TSQL_Parser.Tokens
 {
-    public class TSQLCharacter : TSQLToken
+    /// <summary>
+    /// tsql 连接符
+    /// </summary>
+    public class TSQLConnector : TSQLKeyword
     {
-        public TSQLCharacter(int beginPosition, string text) : base(beginPosition, text)
+        public TSQLConnector(int beginPosition, string text) : base(beginPosition, text)
         {
-            Character = TSQLCharacters.Parse(text);
+            Keyword = TSQLKeywords.Parse(text);
         }
 
 #pragma warning disable 1591
@@ -15,13 +19,13 @@ namespace TSQL.Tokens
         {
             get
             {
-                return TSQLTokenType.Character;
+                return TSQLTokenType.Connector;
             }
         }
 
 #pragma warning restore 1591
 
-        public TSQLCharacters Character
+        public TSQLKeywords Keyword
         {
             get;
             private set;

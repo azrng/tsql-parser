@@ -25,6 +25,9 @@ namespace TSQL
             _tokenizer.MoveNext();
         }
 
+        /// <summary>
+        /// 是否使用
+        /// </summary>
         public bool UseQuotedIdentifiers
         {
             get
@@ -47,13 +50,16 @@ namespace TSQL
             {
                 return _tokenizer.IncludeWhitespace;
             }
-
             set
             {
                 _tokenizer.IncludeWhitespace = value;
             }
         }
 
+        /// <summary>
+        /// 移动到下一个
+        /// </summary>
+        /// <returns></returns>
         public bool MoveNext()
         {
             CheckDisposed();
@@ -64,8 +70,7 @@ namespace TSQL
                 // which should be a keyword if the batch is valid
 
                 // if the last statement parser did not swallow the final semicolon, or there were multiple semicolons, we will swallow it also
-                while (
-                    _tokenizer.Current != null &&
+                while (_tokenizer.Current != null &&
                     (
                         _tokenizer.Current.IsWhitespace() ||
                         _tokenizer.Current.IsComment() ||
@@ -73,8 +78,7 @@ namespace TSQL
                             _tokenizer.Current.Type == TSQLTokenType.Character &&
                             _tokenizer.Current.AsCharacter.Character == TSQLCharacters.Semicolon
                         )
-                    ) &&
-                    _tokenizer.MoveNext()) ;
+                    ) && _tokenizer.MoveNext()) ;
 
                 if (_tokenizer.Current == null)
                 {
@@ -106,10 +110,7 @@ namespace TSQL
         /// <param name="useQuotedIdentifiers"></param>
         /// <param name="includeWhitespace">是否包含空格</param>
         /// <returns></returns>
-        public static List<TSQLStatement> ParseStatements(
-            string tsqlText,
-            bool useQuotedIdentifiers = false,
-            bool includeWhitespace = false)
+        public static List<TSQLStatement> ParseStatements(string tsqlText, bool useQuotedIdentifiers = false, bool includeWhitespace = false)
         {
             return new TSQLStatementReader(tsqlText)
             {
